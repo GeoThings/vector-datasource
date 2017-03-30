@@ -319,6 +319,7 @@ def tags_create_dict(shape, properties, fid, zoom):
     tags_hstore = properties.get('tags')
     if tags_hstore:
         tags = dict(tags_hstore)
+        properties['tags_json'] = json.dumps(tags)
         properties['tags'] = tags
     return shape, properties, fid
 

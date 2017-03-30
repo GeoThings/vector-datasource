@@ -30,6 +30,7 @@ import pycountry
 import re
 import shapely.wkb
 import shapely.ops
+import json
 
 
 feet_pattern = re.compile('([+-]?[0-9.]+)\'(?: *([+-]?[0-9.]+)")?')

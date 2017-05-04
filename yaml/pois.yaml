@@ -85,10 +85,57 @@ global:
         - US National Park Service
         - U.S. National Park Service
         - US National Park service
+  - &no_name_okay
+        - aerialway: pylon
+        - aeroway: [ gate, helipad ]
+        - amenity: [ atm, bbq, bench, bicycle_parking, bicycle_rental,
+            bicycle_repair_station, boat_storage, car_sharing, fuel,
+            life_ring, parking, picnic_table, post_box, ranger_station, recycling,
+            shelter, shower, telephone, toilets, waste_basket, waste_disposal,
+            water_point, watering_place ]
+        - barrier: [ cycle_barrier, gate, toll_booth ]
+        - emergency: [ lifeguard_tower, phone ]
+        - highway: [ bus_stop, ford, mini_roundabout, motorway_junction, platform,
+            rest_area, traffic_signals, trailhead ]
+        - historic: landmark
+        - landuse: quarry
+        - leisure: [ dog_park, firepit, fishing, pitch, slipway, swimming_area ]
+        - lock: yes
+        - man_made: [ adit, communications_tower, mast, mineshaft, observatory,
+            offshore_platform, petroleum_well, power_wind, telescope, water_tower,
+            water_well, windmill ]
+        - natural: [ cave_entrance, peak, volcano, geyser, hot_spring, rock, saddle,
+            stone, spring, tree, waterfall ]
+        - power: [ pole, tower ]
+        - public_transport: [ platform, stop_area ]
+        - railway: [ halt, level_crossing, platform, stop, subway_entrance, tram_stop ]
+        - tags->icn_ref: true
+        - tags->iwn_ref: true
+        - tags->lcn_ref: true
+        - tags->lwn_ref: true
+        - tags->ncn_ref: true
+        - tags->nwn_ref: true
+        - tags->rcn_ref: true
+        - tags->rwn_ref: true
+        - tags->whitewater: [ egress, hazard, put_in, put_in;egress, rapid ]
+        - tourism: [ alpine_hut, information, picnic_site, viewpoint, wilderness_hut ]
+        - waterway: [ dam, lock, waterfall ]
+
 filters:
+  # remove disused things, they're not real POIs any more
   - filter:
       - disused: true
       - not: {disused: "no"}
+    min_zoom: null
+    output:
+      kind: {expr: null}
+
+  # remove things without a name, unless they're in the list of things for which
+  # no name is okay.
+  - filter:
+      - name: false
+      - not:
+          any: *no_name_okay
     min_zoom: null
     output:
       kind: {expr: null}
@@ -250,16 +297,6 @@ filters:
     min_zoom: { min: [ { max: [ 10, { lit: zoom + 2 }, { lit: *tier2_min_zoom } ] }, 14 ] }
     output: { kind: wood, tier: 2 }
 
-  # natural forests - note already clamped to z12
-  - filter: {natural: forest}
-    min_zoom: { min: [ { max: [ 12, { lit: zoom + 2 }, { lit: *tier2_min_zoom } ] }, 14 ] }
-    output: { kind: natural_forest, tier: 2 }
-
-  # natural woods - note already clampted to 12
-  - filter: {natural: wood}
-    min_zoom: { min: [ { max: [ 12, { lit: zoom + 2 }, { lit: *tier2_min_zoom } ] }, 14 ] }
-    output: { kind: natural_wood, tier: 2 }
-
   # farm
   - filter: {landuse: farm}
     min_zoom: { max: [ 15, { lit: *tier2_min_zoom } ] }
@@ -412,7 +449,8 @@ filters:
     # tier5_min_zoom
     min_zoom: 17
     output:
-      kind: {col: attraction, tier: 5}
+      kind: {col: attraction}
+      tier: 5
   # resort
   - filter: {tourism: resort}
     min_zoom: { min: [ { max: [ 14, { lit: zoom + 5.32 }, { lit: *tier5_min_zoom } ] }, 17 ] }
@@ -436,11 +474,14 @@ filters:
     # already clamped below polygon area min
     min_zoom: 17
     output:
-      kind: {col: tourism, tier: 6}
+      kind: {col: tourism}
+      tier: 6
   # common - no POI
   # garden
-  - filter: {leisure: garden}
-    min_zoom: { min: [ 12, { max: [ { lit: zoom }, { lit: *tier6_min_zoom } ] }, 16 ] }
+  - filter:
+      leisure: garden
+      not: { access: [ "private", "no" ] }
+    min_zoom: { min: [ { max: [ 12, { lit: zoom }, { lit: *tier6_min_zoom } ] }, 16 ] }
     output: {kind: garden, tier: 6}
   # hedge - no POI
   # pedestrian - no POI
@@ -461,7 +502,8 @@ filters:
     # already clamped below area limit
     min_zoom: 17
     output:
-      kind: {col: leisure, tier: 6}
+      kind: playground
+      tier: 6
   # school
   - filter: {amenity: school}
     min_zoom: { min: [ { max: [ { lit: zoom + 2.3 }, { lit: *tier6_min_zoom } ] }, 15 ] }
@@ -505,7 +547,7 @@ filters:
     output:
       kind: {col: natural}
       elevation: {col: ele}
-  - filter: 
+  - filter:
       railway: station
       any:
         historic: false
@@ -518,7 +560,7 @@ filters:
     min_zoom: 14
     output: {kind: spring}
   - filter: {railway: level_crossing}
-    min_zoom: 14
+    min_zoom: 18
     output: {kind: level_crossing}
   - filter:
       amenity: [bank, cinema, courthouse, embassy, fire_station, fuel, library, police,
@@ -870,10 +912,15 @@ filters:
     min_zoom: GREATEST(13, LEAST(zoom + 4.9, 16))
     output: {kind: camp_site}
   - filter:
-      tourism: [information, viewpoint]
+      tourism: viewpoint
+    min_zoom: 15
+    output:
+      kind: viewpoint
+  - filter:
+      tourism: information
     min_zoom: 16
     output:
-      kind: {col: tourism}
+      kind: information
   - filter:
       amenity: [atm, bus_stop, drinking_water, emergency_phone,
         post_box, telephone]
@@ -1076,7 +1123,7 @@ filters:
     output: {kind: picnic_site}
   - filter: {highway: services}
     min_zoom: 11
-    output: 
+    output:
       kind: service_area
   - filter: {highway: rest_area}
     min_zoom: 11
@@ -1090,10 +1137,6 @@ filters:
     min_zoom: GREATEST( LEAST(zoom + 3, 14), 12)
     output:
       kind: quarry
-  - filter: {landuse: village_green}
-    min_zoom: GREATEST( LEAST(zoom + 3, 14), 12)
-    output:
-      kind: village_green
 
   ############################################################
   # TIER 6 EXTRA - ATTRACTION
@@ -1106,4 +1149,5 @@ filters:
     # already clamped below polygon area min
     min_zoom: 17
     output:
-      kind: {col: tourism, tier: 6}
+      kind: attraction
+      tier: 6

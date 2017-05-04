@@ -870,8 +870,6 @@ To resolve inconsistency in data tagging in OpenStreetMap we normalize several o
 * `museum`
 * `music`
 * `national_park`
-* `natural_forest` - _See planned bug fixes in [#1103](https://github.com/tilezen/vector-datasource/issues/1103)._
-* `natural_wood` - _See planned bug fixes in [#1103](https://github.com/tilezen/vector-datasource/issues/1103)._
 * `nature_reserve`
 * `newspaper`
 * `ngo`
@@ -981,7 +979,6 @@ To resolve inconsistency in data tagging in OpenStreetMap we normalize several o
 * `university`
 * `veterinary`
 * `viewpoint`
-* `village_green`
 * `volcano` The peak of a volcano. See above for properties available on peaks and volcanos.
 * `walking_junction` - Common in Europe for signed walking routes with named junctions. The walking network reference point's `ref` value is derived from one of `iwn_ref`, `nwn_ref`, `rwn_ref` or `lwn_ref`, in descending order and is suitable for naming or use in a shield.
 * `waste_basket`
@@ -1019,7 +1016,7 @@ Road names are **abbreviated** so directionals like `North` is replaced with `N`
 
 Mapzen calculates the `landuse_kind` value by intercutting `roads` with the `landuse` layer to determine if a road segment is over a parks, hospitals, universities or other landuse features. Use this property to modify the visual appearance of roads over these features. For instance, light grey minor roads look great in general, but aren't legible over most landuse colors unless they are darkened.
 
-To improve performance, some road segments are merged at low and mid-zooms. To facilitate this, certain properties are dropped at those zooms. Examples include `is_bridge` and `is_tunnel`, `name`, `network`, and `ref`. The exact zoom varies per feature class (major roads keep this properties over a wider range, minor roads drop them starting at zoom 14). When roads are merged, the original OSM `id` values are dropped.
+To improve performance, some road segments are merged at low and mid-zooms. To facilitate this, certain properties are dropped at those zooms. Examples include `is_bridge` and `is_tunnel`, `name`, `network`, `oneway`, `ref`, and `surface`. The exact zoom varies per feature class (major roads keep this properties over a wider range, minor roads drop them starting at zoom 14). When roads are merged, the original OSM `id` values are dropped.
 
 #### Road properties (common):
 
@@ -1038,7 +1035,6 @@ To improve performance, some road segments are merged at low and mid-zooms. To f
 
 #### Road properties (common optional):
 
-* `bicycle_network`: Present if the feature is part of a cycling network. If so, the value will be one of `icn` for International Cycling Network, `ncn` for National Cycling Network, `rcn` for Regional Cycling Network, `lcn` for Local Cycling Network.
 * `cycleway`: `cycleway` tag from feature. If no `cycleway` tag is present but `cycleway:both` exists, we source from that tag instead.
 * `cycleway_left`: `cycleway_left` tag from feature
 * `cycleway_right`: `cycleway_right` tag from feature
@@ -1047,7 +1043,7 @@ To improve performance, some road segments are merged at low and mid-zooms. To f
 * `sidewalk_right`: `sidewalk:right` tag from feature
 * `ferry`: See kind list below.
 * `footway`: sidewalk or crossing
-* `is_bicycle_related`: Present and `true` when road features is a dedicated cycleway, part of an OSM bicycle network route relation, or includes cycleway infrastructure like bike lanes or designed for shared use.
+* `is_bicycle_related`: Present and `true` when road features is a dedicated cycleway, part of an OSM bicycle network route relation, or includes cycleway infrastructure like bike lanes, or tagged bicycle=yes or bicycle=designated for shared use.
 * `is_bridge`: `true` if the road is part of a bridge. The property will not be present if the road is not part of a bridge.
 * `is_bus_route`: If present and `true`, then buses or trolley-buses travel down this road. This property is determined based on whether the road is part of an OSM bus route relation, and is only present on roads at zoom 12 and higher.
 * `is_link`: `true` if the road is part of a highway link or ramp. The property will not be present if the road is not part of a highway link or ramp.
@@ -1058,11 +1054,21 @@ To improve performance, some road segments are merged at low and mid-zooms. To f
 * `oneway`: `yes` or `no`. _See bug fix planned in [#1028](https://github.com/tilezen/vector-datasource/issues/1028)._
 * `segregated`: Set to `true` when a path allows both pedestrian and bicycle traffic, but when pedestrian traffic is segregated from bicycle traffic.
 * `service`: See value list below, provided for `railway` and `kind_detail=service` roads.
-* `walking_network`: Present if the feature is part of a hiking network. If so, the value will be one of `iwn` for International Walking Network, `nwn` for National Walking Network, `rwn` for Regional Walking Network, `lwn` for Local Walking Network.
+* `all_walking_networks` and `all_walking_shield_texts`: All of the walking networks of which this road is a part, and each corresponding shield text. See `walking_network` and `walking_shield_text` below. **Note** that these properties will not be present on MVT format tiles, as we cannot currently encode lists as values.
+* `walking_network`: e.g: `nwn` for a "National Walking Network". Other common values include `iwn` for international, `rwn` for regional and `lwn` for local walking networks.
+* `walking_shield_text`: Contains text intended to be displayed on a shield related to the walking network. This is the value from the `ref` tag and is _not_ guaranteed to be numeric, or even concise.
+* `all_bicycle_networks` and `all_bicycle_shield_texts`: All of the bicycle networks of which this road is a part, and each corresponding shield text. See `bicycle_network` and `bicycle_shield_text` below. **Note** that these properties will not be present on MVT format tiles, as we cannot currently encode lists as values.
+* `bicycle_network`: Present if the feature is part of a cycling network. If so, the value will be one of `icn` for International Cycling Network, `ncn` for National Cycling Network, `rcn` for Regional Cycling Network, `lcn` for Local Cycling Network.
+* `bicycle_shield_text`: Contains text intended to be displayed on a shield related to the bicycle network. This is the value from the `ref` tag and is _not_ guaranteed to be numeric, or even concise.
+* `all_bus_networks` and `all_bus_shield_texts`: All of the bus and trolley-bus routes of which this road is a part, and each corresponding shield text. See `bus_network` and `bus_shield_text` below. **Note** that these properties will not be present on MVT format tiles, as we cannot currently encode lists as values.
+* `bus_network`: Note that this is often not present for bus routes / networks. This may be replaced with `operator` in the future, see [issue 1194](https://github.com/tilezen/vector-datasource/issues/1194).
+* `bus_shield_text`: Contains text intended to be displayed on a shield related to the bus or trolley-bus network. This is the value from the `ref` tag and is _not_ guaranteed to be numeric, or even concise.
+* `surface`: Common values include `asphalt`, `unpaved`, `paved`, `ground`, `gravel`, `dirt`, `concrete`, `grass`, `paving_stones`, `compacted`, `sand`, and `cobblestone`.
 
 #### Road properties (optional):
 
 * `ascent`: ski pistes from OpenStreetMap
+* `bicycle`: `yes`, `no`, `designated`, `dismount`, and other values from OpenStreetMap
 * `colour`: ski pistes from OpenStreetMap
 * `descent`: ski pistes from OpenStreetMap
 * `description`: OpenStreetMap features
@@ -1072,6 +1078,8 @@ To improve performance, some road segments are merged at low and mid-zooms. To f
 * `piste_difficulty`: ski pistes from OpenStreetMap
 * `piste_grooming`: ski pistes from OpenStreetMap
 * `piste_name`: ski pistes from OpenStreetMap
+* `ramp`: OpenStreetMap features
+* `ramp_bicycle`: OpenStreetMap features
 * `roundtrip`: OpenStreetMap features
 * `route_name`: OpenStreetMap features
 * `ski`: ski pistes from OpenStreetMap
@@ -1095,9 +1103,9 @@ To improve performance, some road segments are merged at low and mid-zooms. To f
 
 #### Road Transportation `kind_detail` values and zoom ranges:
 
-**Roads** from **OpenStreetMap** are shown starting at zoom 8 with `motorway`, `trunk`, `primary`. `secondary` are added starting at zoom 10, with `motorway_link`, `tertiary` added at zoom 11. Zoom 12 sees addition of `trunk_link`, `residential`, `unclassified`, and `road`, and internationally and nationally significant paths (`path`, `footway`, `steps`). Zoom 13 adds `primary_link`, `secondary_link`, `raceway`, `track`, `pedestrian`, `living_street`, `cycleway` and `bridleway` and regionally significant and/or named or designated paths. Zoom 14 adds `tertiary_link`, all remaining `path`, `footway`, and `steps`, `corridor`, and `alley` service roads. By zoom 15 all remaining service roads are added, including `driveway`, `parking_aisle`, `drive_through`.
-
 **Roads** from **Natural Earth**  are used at low zooms below 8. Road `kind_detail` values are limited to `motorway`, `trunk`, `primary`, `secondary`, `tertiary`.
+
+**Roads** from **OpenStreetMap** are shown starting at zoom 8 with `motorway`, `trunk`, `primary`. `secondary` are added starting at zoom 10, with `motorway_link`, `tertiary` added at zoom 11. Zoom 12 sees addition of `trunk_link`, `residential`, `unclassified`, and `road`. Zoom 13 adds `primary_link`, `secondary_link`, `raceway`, `track`, `pedestrian`, `living_street`, `cycleway` and `bridleway`. Zoom 14 adds `tertiary_link`, all remaining `path`, `footway`, and `steps`, `corridor`, and `alley` service roads. By zoom 15 all remaining service roads are added, including `driveway`, `parking_aisle`, `drive_through`. Internationally and nationally significant paths (`path`, `footway`, `steps`) are added at zoom 9, regionally significant paths are added at zoom 11, locally significant at zoom 12, and named or designated paths at zoom 13. Internationally and nationally significant bicycle routes are added at zoom 8, regionally significant bike routes at zoom 10, and locally significant at zoom 11.
 
 **Ferries** from both Natural Earth and OpenStreetMap are shown starting at zoom 5 with `kind` values of `ferry`.
 
@@ -1175,6 +1183,7 @@ Depending on upstream OpenStreetMap tagging, the following properties may be pre
 A smaller set is also available for non-`platform` features:
 
 * `colour`: either a `#rrggbb` hex value, or a CSS colour name (like `red`)
+* `colour_name`: A colour name from a fixed palette, see description below.
 * `layer`
 * `state`
 * `symbol`
@@ -1198,6 +1207,61 @@ Depending on OpenStreetMap tagging, the following properties may be present for 
 * `subway`
 * `train`
 * `tram`
+
+#### Transit `colour_name` values:
+
+Transit lines may have their colours mapped onto one of these CSS colours. The intention is that designers can take this limited palette set and remap them onto a set which is more appropriate and in keeping with the other colours in the design. Inspired by [py-cooperhewitt-swatchbook](https://github.com/cooperhewitt/py-cooperhewitt-swatchbook).
+
+* aqua
+* aquamarine
+* black
+* blue
+* brown
+* crimson
+* darkgrey
+* darkorchid
+* darkred
+* darkseagreen
+* dodgerblue
+* fuchsia
+* gainsboro
+* gold
+* goldenrod
+* green
+* grey
+* hotpink
+* indigo
+* khaki
+* lightblue
+* lightcoral
+* lightgreen
+* lightteal
+* lime
+* limegreen
+* mediumpurple
+* mediumseagreen
+* mediumturquoise
+* navy
+* olivedrab
+* orange
+* orangered
+* peru
+* pink
+* plum
+* purple
+* red
+* royalblue
+* sandybrown
+* silver
+* steelblue
+* tan
+* teal
+* tomato
+* violet
+* white
+* yellow
+* yellowgreen
+
 
 ## Water
 

@@ -106,7 +106,9 @@ FROM (
     WHERE
       parts && ARRAY[way_id] AND
       parts[way_off+1:rel_off] && ARRAY[way_id] AND
-      hstore(tags) ?& ARRAY['route','network']
+      hstore(tags) ? 'route' AND
+      (hstore(tags) ? 'network' OR
+       hstore(tags) ? 'ref')
     ) inner1
   ) inner2;
 $$ LANGUAGE sql STABLE;
@@ -636,9 +638,12 @@ BEGIN
   RETURN (
     SELECT
         MIN(
-            CASE WHEN hstore(tags)->'network' IN ('iwn', 'nwn', 'icn','ncn') THEN 11
-                 WHEN hstore(tags)->'network' IN ('rwn', 'rcn') THEN 12
-                 WHEN hstore(tags)->'network' IN ('lwn', 'lcn') THEN 13
+            CASE WHEN hstore(tags)->'network' IN ('icn', 'ncn') THEN 8
+                 WHEN hstore(tags)->'network' IN ('iwn', 'nwn') THEN 9
+                 WHEN hstore(tags)->'network' IN ('rcn') THEN 10
+                 WHEN hstore(tags)->'network' IN ('rwn') THEN 11
+                 WHEN hstore(tags)->'network' IN ('lcn') THEN 11
+                 WHEN hstore(tags)->'network' IN ('lwn') THEN 12
             ELSE NULL
             END
         )
@@ -896,7 +901,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
---- Identifies and returns the min_zoom for gates 
+--- Identifies and returns the min_zoom for gates
 --- given the highway level of gate location
 CREATE OR REPLACE FUNCTION mz_get_min_zoom_highway_level_gate(val_osm_id BIGINT)
 RETURNS SMALLINT AS $$

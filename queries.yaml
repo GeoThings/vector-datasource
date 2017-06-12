@@ -66,6 +66,7 @@ layers:
     transform:
       - vectordatasource.transform.tags_create_dict
       - vectordatasource.transform.tags_name_i18n
+      - vectordatasource.transform.tags_modify_kind_shelter
       - vectordatasource.transform.tags_remove
       - vectordatasource.transform.normalize_tourism_kind
       - vectordatasource.transform.add_id_to_properties

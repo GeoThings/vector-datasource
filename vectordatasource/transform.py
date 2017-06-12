@@ -441,6 +441,16 @@ def _convert_osm_l10n_name(x):
 
     return LangResult(code=result, priority=priority)
 
+def tags_modify_kind_shelter(shape, properties, fid, zoom):
+    tags = properties.get('tags')
+    if not tags:
+        return shape, properties, fid
+    
+    for key, value in tags.items():
+        if key == "emergency" and value == "assembly_point":
+            properties['kind'] = "shelter"
+    
+    return shape, properties, fid
 
 def tags_name_i18n(shape, properties, fid, zoom):
     tags = properties.get('tags')

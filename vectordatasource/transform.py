@@ -446,9 +446,12 @@ def tags_modify_kind_shelter(shape, properties, fid, zoom):
     if not tags:
         return shape, properties, fid
     
+    print "entered, shelter_modify"
     for key, value in tags.items():
         if key == "emergency" and value == "assembly_point":
+            print "hit, shelter_modify"
             properties['kind'] = "shelter"
+            break
     
     return shape, properties, fid
 

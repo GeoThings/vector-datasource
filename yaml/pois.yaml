@@ -94,7 +94,7 @@ global:
             shelter, shower, telephone, toilets, waste_basket, waste_disposal,
             water_point, watering_place ]
         - barrier: [ cycle_barrier, gate, toll_booth ]
-        - emergency: [ lifeguard_tower, phone ]
+        - emergency: [ lifeguard_tower, phone, assembly_point ]
         - highway: [ bus_stop, ford, mini_roundabout, motorway_junction, platform,
             rest_area, traffic_signals, trailhead ]
         - historic: landmark
@@ -747,6 +747,9 @@ filters:
   - filter: {emergency: phone}
     min_zoom: 18
     output: {kind: phone}
+  - filter: {emergency: assembly_point}
+    min_zoom: 15
+    output: {kind: assembly_point}
   - filter: {amenity: toilets}
     min_zoom: 18
     output: {kind: toilets}

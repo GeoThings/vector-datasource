@@ -25,7 +25,7 @@ SELECT
 FROM (
 
   SELECT
-    way, 0::real AS way_area, mz_poi_min_zoom, AS min_zoom,
+    way, 0::real AS way_area, mz_poi_min_zoom AS min_zoom,
     osm_id,
     -- note: the mz_calculate_transit_routes_and_score function is pretty
     -- expensive, so we only want to calculate it when we actually need the

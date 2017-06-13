@@ -137,6 +137,7 @@ layers:
       - vectordatasource.transform.normalize_medical_kind
       - vectordatasource.transform.tags_name_i18n
       - vectordatasource.transform.add_uic_ref
+      - vectordatasource.transform.tags_modify_kind_shelter
       - vectordatasource.transform.tags_remove
       - vectordatasource.transform.add_id_to_properties
       - vectordatasource.transform.detect_osm_relation

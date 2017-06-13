@@ -25,7 +25,7 @@ SELECT
 FROM (
 
   SELECT
-    way, 0::real AS way_area, mz_poi_min_zoom AS min_zoom,
+    way, 0::real AS way_area, COALESCE(mz_poi_min_zoom, 15) AS min_zoom,
     osm_id,
     -- note: the mz_calculate_transit_routes_and_score function is pretty
     -- expensive, so we only want to calculate it when we actually need the
@@ -44,15 +44,15 @@ FROM (
   WHERE
     {{ bounds['point']|bbox_filter('way',3857) }}
 {% if zoom >= 16 %}
-    AND mz_poi_min_zoom IS NOT NULL
+    AND COALESCE(mz_poi_min_zoom, 15) IS NOT NULL
 {% else %}
-    AND mz_poi_min_zoom < {{ zoom + 1 }}
+    AND COALESCE(mz_poi_min_zoom, 15) < {{ zoom + 1 }}
 {% endif %}
 
 UNION ALL
 
   SELECT
-    way, way_area, mz_poi_min_zoom AS min_zoom,
+    way, way_area, COALESCE(mz_poi_min_zoom, 15) AS min_zoom,
     osm_id,
     -- note: the mz_calculate_transit_routes_and_score function is pretty
     -- expensive, so we only want to calculate it when we actually need the
@@ -71,9 +71,9 @@ UNION ALL
   WHERE
     {{ bounds['point']|bbox_filter('way',3857) }}
 {% if zoom >= 16 %}
-    AND mz_poi_min_zoom IS NOT NULL
+    AND COALESCE(mz_poi_min_zoom, 15) IS NOT NULL
 {% else %}
-    AND mz_poi_min_zoom < {{ zoom + 1 }}
+    AND COALESCE(mz_poi_min_zoom, 15) < {{ zoom + 1 }}
 {% endif %}
 
 ) pois

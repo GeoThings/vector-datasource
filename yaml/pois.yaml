@@ -120,6 +120,7 @@ global:
         - tags->whitewater: [ egress, hazard, put_in, put_in;egress, rapid ]
         - tourism: [ alpine_hut, information, picnic_site, viewpoint, wilderness_hut ]
         - waterway: [ dam, lock, waterfall ]
+        - evacuation_center: yes
 
 filters:
   # remove disused things, they're not real POIs any more
@@ -747,8 +748,11 @@ filters:
   - filter: {emergency: phone}
     min_zoom: 18
     output: {kind: phone}
+  - filter: {evacuation_center: yes}
+    min_zoom: 14
+    output: {kind: evacuation_center}
   - filter: {emergency: assembly_point}
-    min_zoom: 15
+    min_zoom: 14
     output: {kind: assembly_point}
   - filter: {amenity: toilets}
     min_zoom: 18

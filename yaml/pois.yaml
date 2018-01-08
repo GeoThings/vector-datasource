@@ -96,7 +96,7 @@ global:
         - barrier: [ cycle_barrier, gate, toll_booth ]
         - emergency: [ lifeguard_tower, phone, assembly_point ]
         - highway: [ bus_stop, ford, mini_roundabout, motorway_junction, platform,
-            rest_area, traffic_signals, trailhead ]
+            rest_area, traffic_signals, trailhead, street_lamp ]
         - historic: landmark
         - landuse: quarry
         - leisure: [ dog_park, firepit, fishing, pitch, slipway, swimming_area ]
@@ -748,6 +748,9 @@ filters:
   - filter: {emergency: phone}
     min_zoom: 18
     output: {kind: phone}
+  - filter: {highway: street_lamp}
+    min_zoom: 13
+    output: {kind: street_lamp}
   - filter: {evacuation_center: yes}
     min_zoom: 14
     output: {kind: evacuation_center}

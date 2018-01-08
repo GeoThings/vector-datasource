@@ -14,7 +14,7 @@ WHERE
       OR tags -> 'barrier' IN ('cycle_barrier', 'gate', 'toll_booth')
       OR tags -> 'emergency' IN ('lifeguard_tower', 'phone')
       OR tags -> 'highway' IN ('bus_stop', 'ford', 'mini_roundabout', 'motorway_junction',
-        'platform', 'rest_area', 'traffic_signals', 'trailhead')
+        'platform', 'rest_area', 'traffic_signals', 'trailhead', 'street_lamp')
       OR tags -> 'historic' = 'landmark'
       OR tags -> 'landuse' IN ('village_green', 'quarry')
       OR tags -> 'leisure' IN ('garden', 'dog_park', 'firepit', 'fishing', 'pitch',

@@ -1,0 +1,2 @@
+UPDATE planet_osm_point SET mz_poi_min_zoom = mz_calculate_min_zoom_pois(planet_osm_point.*) WHERE tags ? 'emergency' AND tags->'emergency'='defibrillator';
+UPDATE planet_osm_point SET mz_poi_min_zoom = mz_calculate_min_zoom_pois(planet_osm_point.*) WHERE tags ? 'highway' AND tags->'highway'='street_lamp';

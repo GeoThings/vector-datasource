@@ -745,6 +745,9 @@ filters:
     min_zoom: 16
     output: {kind: boat_rental}
 
+  - filter: {emergency: defibrillator}
+    min_zoom: 13
+    output: {kind: defibrillator}
   - filter: {emergency: phone}
     min_zoom: 18
     output: {kind: phone}

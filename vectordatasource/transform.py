@@ -319,15 +319,14 @@ def admin_level_as_int(shape, properties, fid, zoom):
 
 
 def tags_create_dict(shape, properties, fid, zoom):
-    # tags_hstore = properties.get('tags')
-    # if tags_hstore:
-    #     tags = dict(tags_hstore)
+    tags_hstore = properties.get('tags')
+    if tags_hstore:
+        tags = dict(tags_hstore)
     #     for key, value in tags.iteritems():
     #         properties['__osm_tag__' + key] = value
-            
-    properties['tags'] = tags
-    return shape, properties, fid
+        properties['tags'] = tags
 
+    return shape, properties, fid
 
 def tags_remove(shape, properties, fid, zoom):
     properties.pop('tags', None)

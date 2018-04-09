@@ -325,7 +325,7 @@ def tags_create_dict(shape, properties, fid, zoom):
     #     for key, value in tags.iteritems():
     #         properties['__osm_tag__' + key] = value
             
-    #     properties['tags'] = tags
+    properties['tags'] = tags
     return shape, properties, fid
 
 

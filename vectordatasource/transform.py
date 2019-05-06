@@ -441,6 +441,9 @@ def tags_create_dict(shape, properties, fid, zoom):
     tags_hstore = properties.get('tags')
     if tags_hstore:
         tags = dict(tags_hstore)
+        if zoom > 13:
+            for key, value in tags.iteritems():
+                properties['__osm_tag__' + key] = value
         properties['tags'] = tags
     return shape, properties, fid
 
